@@ -27,9 +27,18 @@ function burnJossPaper(value) {
     currentScore += value;
     scoreDisplay.textContent = currentScore;
     
-    // 1. 播放燒紙錢動畫
+    // 1. 播放燒紙錢動畫 (火焰 - 新增隨機大小和持續時間)
     const fireEffect = document.createElement('div');
-    fireEffect.classList.add('pixel-fire-animation'); // 應用 CSS 定義的火焰動畫
+    fireEffect.classList.add('pixel-fire-animation');
+
+    // 隨機生成火焰大小和動畫持續時間
+    const randomSize = Math.floor(Math.random() * 3) + 3; // 3px, 4px, 5px (核心像素大小)
+    const randomDuration = (Math.random() * 0.1) + 0.15; // 0.15s 到 0.25s 之間的跳動速度
+
+    // 將隨機值設置為 CSS 變數，並應用動畫
+    fireEffect.style.setProperty('--fire-size', `${randomSize}px`);
+    fireEffect.style.animation = `fire-pulse ${randomDuration}s infinite alternate`;
+
     incinerator.appendChild(fireEffect);
     
     // 2. 創建一個臨時的「燒掉」訊息
@@ -39,6 +48,9 @@ function burnJossPaper(value) {
     incinerator.appendChild(message);
 
     // 3. 短暫延遲後移除動畫和訊息
+    // 根據火焰隨機大小，給予足夠的顯示時間，例如 1.2 秒到 1.8 秒
+    const displayTime = 1000 + (randomSize * 100); // 火焰越大顯示越久
+
     setTimeout(() => {
         if (incinerator.contains(fireEffect)) {
             incinerator.removeChild(fireEffect);
@@ -46,7 +58,7 @@ function burnJossPaper(value) {
         if (incinerator.contains(message)) {
             incinerator.removeChild(message);
         }
-    }, 1000); // 1秒後火焰和訊息消失
+    }, displayTime);
 }
 
 

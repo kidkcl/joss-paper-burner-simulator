@@ -109,33 +109,30 @@ body {
     left: 50%;
     transform: translateX(-50%);
     
-    /* 基本火焰核心 (單個像素點) */
+    /* 基礎火焰核心，這個會被 JavaScript 的 --size 變數覆蓋 */
     width: 4px; 
     height: 4px;
-    background-color: #FFEB3B; /* 亮黃色 (火心) */
+    background-color: #FFEB3B; 
     
     /* 確保像素清晰 */
     image-rendering: pixelated; 
     
     /* 應用動畫 */
-    animation: fire-pulse 0.2s infinite alternate;
     z-index: 10; /* 確保火焰在金爐上方 */
 }
 
 .pixel-fire-animation {
     /* 構建多層像素，模擬火焰的形狀和顏色層次 */
     box-shadow: 
-        /* 第一層 (橘色/黃色) */
-        0 -4px 0 0 #FFA000, 
-        -4px 0 0 0 #FF6F00, 
-        4px 0 0 0 #FF6F00,  
+        0 calc(var(--fire-size) * -1) 0 0 #FFA000, 
+        calc(var(--fire-size) * -1) 0 0 0 #FF6F00, 
+        calc(var(--fire-size) * 1) 0 0 0 #FF6F00,  
 
-        /* 第二層 (紅色/深橘色，更寬一些) */
-        -8px -4px 0 0 #F4511E,
-        8px -4px 0 0 #F4511E,
-        0 -8px 0 0 #FFA000,
-        -4px -8px 0 0 #F4511E,
-        4px -8px 0 0 #F4511E;
+        calc(var(--fire-size) * -2) calc(var(--fire-size) * -1) 0 0 #F4511E,
+        calc(var(--fire-size) * 2) calc(var(--fire-size) * -1) 0 0 #F4511E,
+        0 calc(var(--fire-size) * -2) 0 0 #FFA000,
+        calc(var(--fire-size) * -1) calc(var(--fire-size) * -2) 0 0 #F4511E,
+        calc(var(--fire-size) * 1) calc(var(--fire-size) * -2) 0 0 #F4511E;
 }
 
 @keyframes fire-pulse {
@@ -143,7 +140,7 @@ body {
         transform: translateX(-50%) scaleY(1);
     }
     100% {
-        transform: translateX(-50%) scaleY(1.2) translateY(-2px); 
+        transform: translateX(-50%) scaleY(1.2) translateY(calc(var(--fire-size) * -0.5)); /* 根據 --fire-size 調整跳動高度 */
         opacity: 0.9;
     }
 }
@@ -229,6 +226,10 @@ body {
 /* ==================================== */
 
 @media (max-width: 768px) {
+    /* 隱藏手機上的捲軸，避免水平/垂直滾動 */
+    html, body {
+        overflow: hidden;
+    }
     
     /* 1. 調整主容器寬度與邊框，讓內容更集中 */
     #game-container {
@@ -276,8 +277,8 @@ body {
 
     /* 5. 調整紙錢庫存區：讓紙錢集中顯示 */
     #joss-paper-inventory {
-        /* 在手機上，讓紙錢從左到右排列，不強制置中，以利用空間 */
-        justify-content: flex-start; 
+        /* 在手機上，讓紙錢置中排列，視覺更集中 */
+        justify-content: center; 
         padding: 10px;
     }
     
