@@ -110,3 +110,110 @@ incinerator.addEventListener('drop', (e) => {
         burnJossPaper(value);
     }
 });
+
+// ====================================
+// 裝置判斷工具
+// ====================================
+
+function isMobileDevice() {
+    // 檢查用戶代理字串是否包含常見的移動設備關鍵詞
+    const userAgent = navigator.userAgent.toLowerCase();
+    const mobileKeywords = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
+    
+    const isMobileUA = mobileKeywords.test(userAgent);
+    
+    // 檢查是否支持觸摸事件 (這是更可靠的判斷方法，但桌面觸摸螢幕也算)
+    const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    
+    // 判斷為移動裝置：基於用戶代理或有觸控點
+    return isMobileUA || hasTouch;
+}
+
+const isMobile = isMobileDevice();
+
+// 獲取元素 (這裡假設您在 HTML 中為說明文字設置了一個 ID)
+const instructions = document.getElementById('instructions'); 
+
+// ... [所有變數和 burnJossPaper 函數保持不變] ...
+
+// ====================================
+// 鍵盤快速鍵監聽器
+// ====================================
+document.addEventListener('keydown', (e) => {
+    // 如果是行動裝置，則忽略鍵盤快速鍵
+    if (isMobile) {
+        return; 
+    }
+    
+    const key = e.key;
+
+    // 檢查按下的鍵是否為數字鍵 1, 2, 或 3
+    if (key === '1' || key === '2' || key === '3') {
+        e.preventDefault(); 
+        
+        const valueToBurn = paperTypes[key];
+
+        if (valueToBurn) {
+            burnJossPaper(valueToBurn);
+            
+            // 視覺回饋 (保持不變)
+            const paperElement = Array.from(jossPapers).find(p => p.innerText.trim() === (key === '1' ? '💰' : key === '2' ? '💵' : '👑'));
+            if (paperElement) {
+                paperElement.style.transform = 'translateY(2px)';
+                setTimeout(() => {
+                    paperElement.style.transform = 'translateY(0)';
+                }, 100);
+            }
+        }
+    }
+});
+
+
+// ====================================
+// 拖曳與放置/觸摸點擊功能
+// ====================================
+
+// 調整說明文字
+if (instructions) {
+    if (isMobile) {
+        instructions.textContent = "點擊紙錢，或拖曳到金爐 🔥";
+    } else {
+        instructions.textContent = "拖曳紙錢到金爐 🔥 上，或按 1, 2, 3 快速燒紙。";
+    }
+}
+
+jossPapers.forEach(paper => {
+    // 桌面裝置啟用拖曳
+    if (!isMobile) {
+        paper.draggable = true;
+        paper.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', paper.dataset.value);
+        });
+    } else {
+        // 行動裝置：新增點擊事件來代替拖曳
+        paper.addEventListener('click', () => {
+             const value = parseInt(paper.dataset.value);
+             burnJossPaper(value);
+             
+             // 點擊後短暫視覺回饋
+             paper.style.opacity = '0.5';
+             setTimeout(() => { paper.style.opacity = '1'; }, 200);
+        });
+    }
+});
+
+// 啟用金爐的放置區域 (拖曳)
+incinerator.addEventListener('dragover', (e) => {
+    if (!isMobile) { e.preventDefault(); }
+});
+
+// 放置事件 (燒紙錢)
+incinerator.addEventListener('drop', (e) => {
+    if (!isMobile) {
+        e.preventDefault();
+        const value = parseInt(e.dataTransfer.getData('text/plain'));
+        if (value) {
+            burnJossPaper(value);
+        }
+    }
+});
