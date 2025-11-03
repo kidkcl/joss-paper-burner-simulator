@@ -1,0 +1,225 @@
+/* ==================================== */
+/* 1. 全域設定與背景 */
+/* ==================================== */
+body {
+    background-color: #121212; /* 深色背景，模擬夜晚或幽靜空間 */
+    font-family: 'Pixelated Font', monospace; /* 替換成實際的像素字體 */
+    color: #00FF00; /* 經典的復古綠色文字 */
+    image-rendering: pixelated; /* 確保所有圖像和邊緣都保持像素清晰 */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#game-container {
+    width: 800px;
+    max-width: 95%;
+    background-color: #212121;
+    border: 5px solid #00FF00;
+    box-shadow: 8px 8px 0 0 #009900; /* 巨大的像素陰影 */
+    padding: 20px;
+    margin-top: 30px;
+}
+
+#info-bar {
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed #00FF00;
+    margin-bottom: 20px;
+}
+
+#instructions {
+    text-align: center;
+    font-size: 1.2em;
+    margin-top: 30px;
+}
+
+/* ==================================== */
+/* 2. CSS 繪製金爐 (#incinerator) */
+/* ==================================== */
+#burning-scene {
+    min-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#incinerator {
+    position: relative; /* **重要：讓火焰定位在裡面** */
+    width: 120px;       
+    height: 150px;      
+    background-color: #BDBDBD; /* 金爐的主體顏色 (銀灰色，像鑄鐵) */
+    border: 4px solid #212121; /* 粗邊框，模擬像素邊緣 */
+    border-radius: 8px 8px 4px 4px; 
+    margin: 30px auto 0 auto;
+    box-shadow: 
+        inset 4px 4px #E0E0E0,   
+        -4px 4px 0 0 #212121,    
+        4px 4px 0 0 #212121;
+
+    /* 確保所有這些「像素」效果在低解析度下都清晰 */
+    image-rendering: pixelated;
+}
+
+/* 金爐的開口 */
+#incinerator::before {
+    content: '';
+    position: absolute;
+    top: -8px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 12px;
+    background-color: #333; 
+    border: 4px solid #212121;
+    border-radius: 4px;
+    box-shadow: 
+        inset 2px 2px #555,
+        0 4px 0 0 #212121;
+}
+
+/* 金爐的底座 */
+#incinerator::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 20px;
+    background-color: #5D4037; 
+    border: 4px solid #212121;
+    border-radius: 4px;
+    box-shadow: 
+        inset 2px 2px #795548,
+        0 4px 0 0 #212121;
+}
+
+
+/* ==================================== */
+/* 3. CSS 繪製火焰動畫 (.pixel-fire-animation) */
+/* ==================================== */
+.pixel-fire-animation {
+    /* 定位在金爐內部 */
+    position: absolute; 
+    bottom: 20px; 
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* 基本火焰核心 (單個像素點) */
+    width: 4px; 
+    height: 4px;
+    background-color: #FFEB3B; /* 亮黃色 (火心) */
+    
+    /* 確保像素清晰 */
+    image-rendering: pixelated; 
+    
+    /* 應用動畫 */
+    animation: fire-pulse 0.2s infinite alternate;
+    z-index: 10; /* 確保火焰在金爐上方 */
+}
+
+.pixel-fire-animation {
+    /* 構建多層像素，模擬火焰的形狀和顏色層次 */
+    box-shadow: 
+        /* 第一層 (橘色/黃色) */
+        0 -4px 0 0 #FFA000, 
+        -4px 0 0 0 #FF6F00, 
+        4px 0 0 0 #FF6F00,  
+
+        /* 第二層 (紅色/深橘色，更寬一些) */
+        -8px -4px 0 0 #F4511E,
+        8px -4px 0 0 #F4511E,
+        0 -8px 0 0 #FFA000,
+        -4px -8px 0 0 #F4511E,
+        4px -8px 0 0 #F4511E;
+}
+
+@keyframes fire-pulse {
+    0% {
+        transform: translateX(-50%) scaleY(1);
+    }
+    100% {
+        transform: translateX(-50%) scaleY(1.2) translateY(-2px); 
+        opacity: 0.9;
+    }
+}
+
+
+/* ==================================== */
+/* 4. 紙錢庫存區與紙錢樣式 (.joss-paper) */
+/* ==================================== */
+#joss-paper-inventory {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 20px 0;
+    border-top: 2px dashed #00FF00;
+}
+
+.joss-paper {
+    width: 64px;
+    height: 40px;
+    background-color: #FFFDE7; /* 基本紙張顏色 */
+    border: 3px solid #6D4C41; /* 深棕色邊框 */
+    cursor: grab;
+    image-rendering: pixelated; 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #000;
+    
+    margin: 0 15px; /* 間隔開 */
+    
+    /* 模擬像素風格的陰影 */
+    box-shadow: 2px 2px 0 0 #4E342E; 
+    transition: transform 0.1s; 
+    position: relative; /* 讓金箔定位 */
+}
+
+/* 模擬紙錢上的金箔區塊 */
+.joss-paper::after {
+    content: '';
+    position: absolute;
+    width: 20px; 
+    height: 20px;
+    background-color: #FFD700; /* 金黃色 */
+    border: 2px solid #DAA520; /* 深金色邊框 */
+    
+    /* 模擬金箔的光澤 (使用內陰影) */
+    box-shadow: 
+        inset 1px 1px 0 0 #FFFFE0, 
+        inset -1px -1px 0 0 #B8860B;
+    
+    image-rendering: pixelated;
+}
+
+/* 拖曳時的樣式變化 */
+.joss-paper:hover {
+    transform: translateY(-2px); 
+    box-shadow: 4px 4px 0 0 #4E342E; 
+}
+
+/* 燒掉時彈出的文字訊息 */
+.burn-message {
+    position: absolute;
+    top: 20%; 
+    left: 50%;
+    transform: translateX(-50%);
+    color: #FF0000; /* 紅色，像暴擊傷害 */
+    font-size: 1.5em;
+    font-weight: bold;
+    animation: fly-up 1s forwards; /* 向上飛起動畫 */
+    z-index: 20;
+}
+
+@keyframes fly-up {
+    0% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -40px); } /* 向上飄走並淡出 */
+}
